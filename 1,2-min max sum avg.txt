@@ -1,0 +1,74 @@
+#include<iostream>
+#include<time.h>
+#include<cstdlib>
+using namespace std;
+
+int main()
+{
+	time_t start , end;
+	int num = 10000;
+	int arr1[] = {1, 2,3,4,5,5,4,-3,-2,-1}; 
+	int arr[num];
+	start = clock();
+	        #pragma omp parallel for
+	
+		for(int i=0;  i<num ; i++)
+		{
+			arr[i] = 2;
+		}
+	
+	int sum1 = 0;
+	#pragma omp parallel for reduction (+:sum1)
+	
+		for(int i=0 ; i<10 ; i++)
+		{
+			sum1 = sum1+ arr1[i];
+		}
+		
+		int avg ;
+		
+		avg = sum1/10;
+	
+	cout<<"The sum of the numbers is : "<<avg<<endl;
+	end = clock();
+	cout<<"The time that was taken for the operation is : "<<((double)(end-start)/CLOCKS_PER_SEC)<<" seconds "<<endl;
+	// Reduction MIN
+	start = clock();
+	#pragma omp parallel for
+	
+		for(int i=0;  i<num ; i++)
+		{
+			arr[i] = rand()%1000;
+		}
+	
+	int minimum=1000;
+	#pragma omp parallel for reduction (min:minimum)
+	
+		for(int i=0 ; i<num ; i++)
+		{
+			if(minimum > arr[i])
+			minimum = arr[i];
+		}
+	
+	cout<<"The Minimum amongst the array is "<<minimum<<endl ;
+	end = clock();
+	cout<<"The time that was taken for the operation is : "<<((double)(end-start)/CLOCKS_PER_SEC)<<" seconds "<<endl;
+	int maximum = -1;
+	start = clock();
+	#pragma omp parallel for reduction (max:maximum)
+	
+		for(int i=0 ; i<10 ; i++)
+		{
+			if(maximum < arr1[i])
+				maximum = arr1[i];
+		}
+	
+	cout<<"The Max amongst the array is "<<maximum<<endl ;
+	end = clock();
+	cout<<"The time that was taken for the operation is : "<<((double)(end-start)/CLOCKS_PER_SEC)<<" seconds "<<endl;
+	
+	
+	return 0;
+}
+
+// g++ -fopenmp filename.cpp

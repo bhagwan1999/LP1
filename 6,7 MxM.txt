@@ -1,0 +1,54 @@
+#include<iostream>
+#include<cstdlib>
+#include<omp.h>
+#include<cstring>
+#include<time.h>
+using namespace std;
+
+int main()
+{
+	clock_t start,end;
+	start = clock();
+	int n;
+	cout<<"\nEnter the value of n : ";
+	cin>>n;
+	int mat1[n][n],mat2[n][n],mat3[n][n];
+	#pragma omp parallel for collapse(2)
+	for(int i=0;i<n;i++)
+	{
+	//	#pragma omp parallel for
+		for(int j=0;j<n;j++)
+		{
+			mat1[i][j] = rand()%100;
+			mat2[i][j] = rand()%100;
+			
+		}
+	}
+	
+	memset(mat3 , 0 , sizeof(mat3));
+	
+	#pragma omp parallel for collapse(3)
+	for(int i=0;i<n;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			for(int k=0;k<n;k++)
+			{
+				mat3[i][j] += mat1[i][k] * mat2[k][j];
+			}
+		}
+	}
+	
+	cout<<"\nThe values : \n";
+//	#pragma omp parallel for collapse(2)
+	for(int i=0;i<n;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			cout<<mat3[i][j]<<"\t";
+		}
+		cout<<"\n";
+	}
+	end = clock();
+	cout<<"\nExecution time : "<<((double)(end-start)/CLOCKS_PER_SEC)<<" s"<<endl;
+}

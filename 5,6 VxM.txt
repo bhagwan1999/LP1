@@ -1,0 +1,52 @@
+#include<iostream>
+#include<cstdlib>
+#include<omp.h>
+#include<time.h>
+using namespace std;
+
+int main()
+{
+	clock_t start,end;
+	start = clock();
+	int n;
+	cout<<"\nEnter the value of n : ";
+	cin>>n;
+	int v1[n],v2[n];
+	int mat[n][n];
+	
+	
+	#pragma omp parallel for
+	for(int i=0;i<n;i++)
+	{
+	   v1[i] = rand()%100;
+	   v2[i] = 0;
+	}
+	#pragma omp parallel for
+	for(int i=0;i<n;i++)
+	{       
+	#pragma omp parallel for
+		for(int j=0;j<n;j++)
+		{
+			mat[i][j] = rand()%100;
+		}
+	}
+	
+	#pragma omp parallel for 
+	for(int i=0;i<n;i++)
+	{
+	#pragma omp parallel for
+		for(int j=0;j<n;j++)
+		{
+			v2[i] = v2[i] + (mat[i][j] * v1[j]);
+		}
+	}
+	
+	cout<<"\nThe values : \n";
+	
+	for(int i=0;i<n;i++)
+	{
+		cout<<i<<" : "<<v2[i]<<"\n";
+	}
+	end = clock();
+	cout<<"\nExecution time : "<<((double)(end-start)/CLOCKS_PER_SEC)<<" s"<<endl;
+}
